@@ -1,3 +1,3 @@
 FROM jboss/wildfly
 
-ADD target/fnord-status.war /opt/jboss/wildfly/standalone/deployments
+ADD target/soundboard.war /opt/jboss/wildfly/standalone/deployments/soundboard.war
