@@ -177,7 +177,7 @@ var CategorySelectPanel = React.createClass({
         });
         return (
             <div className="categorySelectPanel">
-                <button onClick={this.handleClick} type="button">Kill</button>
+                <button className="btn btn-danger" onClick={this.handleClick} type="button">Kill</button>
                 <SoundSearch />
                 <RemotePlay />
                 <ul>{categorySelects}</ul>
