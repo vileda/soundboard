@@ -17,8 +17,8 @@ public class SoundfileQueue
 	@Resource
 	private ManagedExecutorService mes;
 
-	BlockingQueue<ProcessBuilder> processQueue = new LinkedBlockingQueue<>();
-	BlockingQueue<Process> runningProcesses = new LinkedBlockingQueue<>();
+	final BlockingQueue<ProcessBuilder> processQueue = new LinkedBlockingQueue<>();
+	final BlockingQueue<Process> runningProcesses = new LinkedBlockingQueue<>();
 	private volatile boolean isPlaying = false;
 
 	public void add(ProcessBuilder item)

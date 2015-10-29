@@ -17,7 +17,7 @@ public class SoundfileController {
 	@Inject
 	private SoundfileQueue soundfileQueue;
 
-	List<Category> soundfiles = new ArrayList<>();
+	final List<Category> soundfiles = new ArrayList<>();
 
 	public List<Category> getSoundfiles() {
 		if(soundfiles.isEmpty()) {
@@ -67,8 +67,8 @@ public class SoundfileController {
 		}
 	}
 
-	private boolean makeSoundfile(Category category, File leaf) {
-		return category.getSoundfiles().add(new Soundfile(leaf.getName(), leaf.getAbsolutePath()));
+	private void makeSoundfile(Category category, File leaf) {
+		category.getSoundfiles().add(new Soundfile(leaf.getName(), leaf.getAbsolutePath()));
 	}
 
 	public void play(String path) {
