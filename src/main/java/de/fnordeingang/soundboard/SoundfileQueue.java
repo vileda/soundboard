@@ -2,15 +2,12 @@ package de.fnordeingang.soundboard;
 
 import org.apache.commons.lang3.StringUtils;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
-import javax.ejb.AccessTimeout;
-import javax.ejb.Asynchronous;
 import javax.ejb.Singleton;
 import javax.enterprise.concurrent.ManagedExecutorService;
 import java.io.IOException;
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 @Singleton
 public class SoundfileQueue
@@ -68,7 +65,7 @@ public class SoundfileQueue
 		}
 	}
 
-	private String getSoundfileLocation() {
+	public String getSoundfileLocation() {
 		String soundfileDir = System.getenv("soundfiles");
 		soundfileDir = soundfileDir == null ? System.getProperty("soundfiles") : soundfileDir;
 		return soundfileDir;

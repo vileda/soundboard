@@ -2,7 +2,7 @@ package de.fnordeingang.soundboard;
 
 import org.apache.commons.lang3.StringUtils;
 
-import javax.ejb.StatefulTimeout;
+import javax.ejb.Stateful;
 import javax.inject.Inject;
 import java.io.File;
 import java.util.ArrayList;
@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
-@StatefulTimeout(30000)
+@Stateful
 public class SoundfileController {
 	@Inject
 	private SoundfileQueue soundfileQueue;

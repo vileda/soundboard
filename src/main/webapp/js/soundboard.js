@@ -10,7 +10,7 @@ var SoundfileOption = React.createClass({
     },
     render: function() {
         return (
-            <p><a id={'cat_'+CryptoJS.MD5(this.props.category.name)} onClick={this.handleClick} href="/" data-url={this.props.soundfile.path}>{this.props.soundfile.title}</a></p>
+            <li><a id={'cat_'+CryptoJS.MD5(this.props.category.name)} onClick={this.handleClick} href="/" data-url={this.props.soundfile.path}>{this.props.soundfile.title}</a></li>
         );
     }
 });
@@ -33,8 +33,10 @@ var CategorySelect = React.createClass({
             );
         }.bind(this));
         return (
-            <div className="collapse" id={'cat_'+CryptoJS.MD5(this.props.category.name)}>
-                {soundfileOptions}
+            <div className="collapse well category-select" id={'cat_'+CryptoJS.MD5(this.props.category.name)}>
+                <ul>
+                    {soundfileOptions}
+                </ul>
             </div>
         );
     }
@@ -166,7 +168,7 @@ var CategorySelectPanel = React.createClass({
         var categorySelects = this.state.data.map(function (category) {
             return (
                 <li>
-                    <button class="btn btn-primary" type="button" data-toggle="collapse" data-target={'#cat_'+CryptoJS.MD5(category.name)} aria-expanded="false" aria-controls={'#cat_'+CryptoJS.MD5(category.name)}>
+                    <button className="btn btn-primary" type="button" data-toggle="collapse" data-target={'#cat_'+CryptoJS.MD5(category.name)} aria-expanded="false" aria-controls={'#cat_'+CryptoJS.MD5(category.name)}>
                         {category.name}
                     </button>
                     <CategorySelect category={category} />
