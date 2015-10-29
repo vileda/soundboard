@@ -1,5 +1,6 @@
 package de.fnordeingang.soundboard;
 
+import javax.ejb.Asynchronous;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.*;

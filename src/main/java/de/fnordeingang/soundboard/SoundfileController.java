@@ -5,7 +5,9 @@ import org.apache.commons.lang3.StringUtils;
 import javax.ejb.StatefulTimeout;
 import javax.inject.Inject;
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 @StatefulTimeout(30000)
@@ -71,13 +73,12 @@ public class SoundfileController {
 	}
 
 	public void play(String path) {
-		System.out.println(path);
 		enqueue(path);
-		soundfileQueue.playQueue();
 	}
 
 	private void enqueue(String command) {
 		ProcessBuilder p = new ProcessBuilder("/usr/bin/env", "mpv", command);
+		System.out.println("enqueuing" + StringUtils.join(p.command(), ' '));
 		soundfileQueue.add(p);
 	}
 

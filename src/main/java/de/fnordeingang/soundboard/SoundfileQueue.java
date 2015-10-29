@@ -1,47 +1,63 @@
 package de.fnordeingang.soundboard;
 
+import org.apache.commons.lang3.StringUtils;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+import javax.ejb.AccessTimeout;
 import javax.ejb.Asynchronous;
 import javax.ejb.Singleton;
+import javax.enterprise.concurrent.ManagedExecutorService;
 import java.io.IOException;
-import java.util.List;
-import java.util.Stack;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.*;
+import java.util.concurrent.*;
 
 @Singleton
 public class SoundfileQueue
 {
-	List<Process> processes = new CopyOnWriteArrayList<>();
-	Stack<ProcessBuilder> processQueue = new Stack<>();
-	private boolean isPlaying = false;
+	@Resource
+	private ManagedExecutorService mes;
 
-	public ProcessBuilder add(ProcessBuilder item)
+	BlockingQueue<ProcessBuilder> processQueue = new LinkedBlockingQueue<>();
+	BlockingQueue<Process> runningProcesses = new LinkedBlockingQueue<>();
+	private volatile boolean isPlaying = false;
+
+	public void add(ProcessBuilder item)
 	{
-		return processQueue.push(item);
+		try {
+			processQueue.put(item);
+			playQueue();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 
-	@Asynchronous
-	public void playQueue() {
-		while (!processQueue.isEmpty() && !isPlaying) {
-			isPlaying = true;
-			final ProcessBuilder processBuilder = processQueue.pop();
-			try
-			{
-				clearDeadProcesses();
-				final Process process = processBuilder.start();
-				processes.add(process);
-				process.waitFor();
+	private void playQueue() {
+		if(isPlaying) return;
+		isPlaying = true;
+		Runnable playsounds = () -> {
+			while (true) {
+				try {
+					ProcessBuilder processBuilder = processQueue.take();
+					System.out.println("playing " + StringUtils.join(processBuilder.command(), ' '));
+					Process start = processBuilder.start();
+					runningProcesses.put(start);
+					start.waitFor();
+					if(!isPlaying) break;
+				} catch (UnsupportedOperationException | InterruptedException | IOException ignored) {
+
+				}
 			}
-			catch (IOException | InterruptedException e)
-			{
-				e.printStackTrace();
-			}
-		}
-		isPlaying = false;
+		};
+
+		mes.execute(playsounds);
 	}
 
 	public void killall() {
-		processes.stream().forEach(Process::destroy);
-		clearDeadProcesses();
+		isPlaying = false;
+		processQueue.clear();
+		runningProcesses.stream().forEach(Process::destroyForcibly);
+		runningProcesses.clear();
 		try
 		{
 			Runtime.getRuntime().exec("/usr/bin/env mpv " + getSoundfileLocation() + "/scratch.mp3");
@@ -50,11 +66,6 @@ public class SoundfileQueue
 		{
 			e.printStackTrace();
 		}
-	}
-
-	private void clearDeadProcesses()
-	{
-		processes.stream().filter(process -> !process.isAlive()).forEach(processes::remove);
 	}
 
 	private String getSoundfileLocation() {
