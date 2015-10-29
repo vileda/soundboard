@@ -58,8 +58,29 @@ var AutoCompleteBox = React.createClass({
     }
 });
 
+var RemotePlay = React.createClass({
+   handleKeyUp: function(e) {
+       console.log(e);
+       if(e.keyCode === 13) {
+           $.ajax({
+               url: 'sounds',
+               contentType: 'application/json',
+               method: 'POST',
+               data: $(e.target).val()
+           });
+           e.target.value = '';
+       }
+   },
+   render: function () {
+       return (
+           <label>Remote:
+            <input onKeyUp={this.handleKeyUp} type="text" placeholder="URL" />
+           </label>
+       );
+   }
+});
+
 var SoundSearch = React.createClass({
-    //we initilize the component state with an immutable array
     getInitialState: function() {
         return {autocomplete: [], call: {latest:0, term:''}};
     },
@@ -77,9 +98,6 @@ var SoundSearch = React.createClass({
     makeCall: function(term, current) {
         var searchUrl = "/sounds/search?q="+encodeURIComponent(term);
         $.getJSON(searchUrl, function(data) {
-                // this ensures that we ignore out of order ajax calls and that the last call will win.
-                //Note: an alternative could have been to use jquery's beforeSend callback to abort the previous call
-                //but that would have required an enclosing mutable reference to the previous XHR object.
                 if (current == this.state.call.latest) {
                     var newPriority = this.state.call.latest - 1;
                     this.setState({autocomplete: data, call: {latest: newPriority, term:''} });
@@ -87,7 +105,6 @@ var SoundSearch = React.createClass({
             }.bind(this)
         );
     },
-    //set state if user enters at least 3 chars, also reset state if user clears input box.
     handleKeyUp : function (e) {
         var k = e.target.value;
         if (k.length > 1 ) {
@@ -148,6 +165,7 @@ var CategorySelectPanel = React.createClass({
             <div className="categorySelectPanel">
                 <button onClick={this.handleClick} type="button">Kill</button>
                 <SoundSearch />
+                <RemotePlay />
                 <ul>{categorySelects}</ul>
             </div>
         );

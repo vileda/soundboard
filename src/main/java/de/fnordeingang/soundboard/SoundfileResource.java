@@ -37,7 +37,7 @@ public class SoundfileResource {
 
 	@GET
 	@Path("/search")
-	public List<Soundfile> search(@QueryParam("q") String term) {
+	public List<SortedSoundfile> search(@QueryParam("q") String term) {
 		return controller.search(term);
 	}
 }
