@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.util.concurrent.TimeUnit;
 
+import static de.fnordeingang.soundboard.Config.getSoundfileLocation;
 import static java.nio.file.StandardWatchEventKinds.*;
 
 @Singleton
@@ -35,11 +36,5 @@ public class FileWatcher {
 			}
 		} catch (InterruptedException ignored) {
 		}
-	}
-
-	public String getSoundfileLocation() {
-		String soundfileDir = System.getenv("soundfiles");
-		soundfileDir = soundfileDir == null ? System.getProperty("soundfiles") : soundfileDir;
-		return soundfileDir;
 	}
 }

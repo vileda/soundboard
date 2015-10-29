@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import static de.fnordeingang.soundboard.Config.getSoundfileLocation;
+
 @Singleton
 public class SoundfileQueue
 {
@@ -63,11 +65,5 @@ public class SoundfileQueue
 		{
 			e.printStackTrace();
 		}
-	}
-
-	public String getSoundfileLocation() {
-		String soundfileDir = System.getenv("soundfiles");
-		soundfileDir = soundfileDir == null ? System.getProperty("soundfiles") : soundfileDir;
-		return soundfileDir;
 	}
 }

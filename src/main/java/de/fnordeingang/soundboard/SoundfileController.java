@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
+import static de.fnordeingang.soundboard.Config.getSoundfileLocation;
+
 @Stateful
 public class SoundfileController {
 	@Inject
@@ -32,12 +34,6 @@ public class SoundfileController {
 		}
 
 		return soundfiles;
-	}
-
-	private String getSoundfileLocation() {
-		String soundfileDir = System.getenv("soundfiles");
-		soundfileDir = soundfileDir == null ? System.getProperty("soundfiles") : soundfileDir;
-		return soundfileDir;
 	}
 
 	private void walkDirectories(File root, Category category, List<Category> soundfiles) {
