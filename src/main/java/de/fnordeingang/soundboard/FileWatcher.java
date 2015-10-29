@@ -1,15 +1,14 @@
 package de.fnordeingang.soundboard;
 
-import javax.ejb.EJB;
-import javax.ejb.Schedule;
-import javax.ejb.Stateless;
+import javax.annotation.Resource;
+import javax.ejb.*;
 import javax.inject.Inject;
 import java.io.IOException;
 import java.nio.file.*;
 
 import static java.nio.file.StandardWatchEventKinds.*;
 
-@Stateless
+@Singleton
 public class FileWatcher {
 	@Inject
 	SoundfileController soundfileController;
@@ -23,12 +22,13 @@ public class FileWatcher {
 		path.register(watcher, ENTRY_CREATE, ENTRY_MODIFY, ENTRY_DELETE);
 	}
 
-	@Schedule(hour = "*", minute = "*/1", persistent = false)
+	@Schedule(persistent = false, hour = "*", minute = "*/10")
 	public void execute() {
 		try {
 			WatchKey key = watcher.take();
 			for (WatchEvent<?> event : key.pollEvents()) {
 				soundfileController.getSoundfiles().clear();
+				soundfileController.getSoundfiles();
 				System.out.println("clearing cache " + event.kind().name());
 			}
 		} catch (InterruptedException ignored) {

@@ -10,7 +10,7 @@ var SoundfileOption = React.createClass({
     },
     render: function() {
         return (
-            <li><a id={'cat_'+CryptoJS.MD5(this.props.category.name)} onClick={this.handleClick} href="/" data-url={this.props.soundfile.path}>{this.props.soundfile.title}</a></li>
+            <li><a className="btn btn-success btn-default" id={'cat_'+CryptoJS.MD5(this.props.category.name)} onClick={this.handleClick} href="/" data-url={this.props.soundfile.path}>{this.props.soundfile.title}</a></li>
         );
     }
 });
@@ -45,7 +45,7 @@ var CategorySelect = React.createClass({
 var AutoComplete = React.createClass({
     render: function() {
         return (
-            <p><a onClick={this.props.handleClick} href="/" data-url={this.props.item.path}>{this.props.item.title}</a></p>
+            <p><a className="btn btn-success btn-default" onClick={this.props.handleClick} href="/" data-url={this.props.item.path}>{this.props.item.title}</a></p>
         );
     }
 });
@@ -168,7 +168,7 @@ var CategorySelectPanel = React.createClass({
         var categorySelects = this.state.data.map(function (category) {
             return (
                 <li>
-                    <button className="btn btn-primary" type="button" data-toggle="collapse" data-target={'#cat_'+CryptoJS.MD5(category.name)} aria-expanded="false" aria-controls={'#cat_'+CryptoJS.MD5(category.name)}>
+                    <button className="btn btn-primary btn-lg" type="button" data-toggle="collapse" data-target={'#cat_'+CryptoJS.MD5(category.name)} aria-expanded="false" aria-controls={'#cat_'+CryptoJS.MD5(category.name)}>
                         {category.name}
                     </button>
                     <CategorySelect category={category} />

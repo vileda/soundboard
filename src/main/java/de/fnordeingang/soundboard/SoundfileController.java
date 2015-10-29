@@ -26,6 +26,9 @@ public class SoundfileController {
 			walkDirectories(dir, uncategorized, soundfiles);
 
 			soundfiles.sort((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()));
+			soundfiles.stream()
+					.map(Category::getSoundfiles)
+					.forEach(soundfiles1 -> soundfiles1.sort((o1, o2) -> o1.getTitle().compareToIgnoreCase(o2.getTitle())));
 		}
 
 		return soundfiles;
