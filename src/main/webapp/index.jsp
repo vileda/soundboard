@@ -30,6 +30,8 @@
 <div class="container-fluid" id="content"></div><!-- /.container -->
 
 <script src="webjars/jquery/1.11.1/jquery.js"></script>
+<script src="webjars/cryptojs/3.1.2/components/core-min.js"></script>
+<script src="webjars/cryptojs/3.1.2/components/md5-min.js"></script>
 <script src="webjars/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 <script src="webjars/babel/5.8.29-1/browser.min.js"></script>
 <script src="webjars/react/0.14.0/react-with-addons.min.js"></script>

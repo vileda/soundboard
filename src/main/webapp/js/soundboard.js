@@ -1,8 +1,16 @@
-
 var SoundfileOption = React.createClass({
+    handleClick: function(e) {
+        e.preventDefault();
+        $.ajax({
+            url: 'sounds',
+            contentType: 'application/json',
+            method: 'POST',
+            data: $(e.target).data('url')
+        });
+    },
     render: function() {
         return (
-            <option onClick={this.onClick} value={this.props.soundfile.path}>{this.props.soundfile.title}</option>
+            <p><a id={'cat_'+CryptoJS.MD5(this.props.category.name)} onClick={this.handleClick} href="/" data-url={this.props.soundfile.path}>{this.props.soundfile.title}</a></p>
         );
     }
 });
@@ -21,14 +29,13 @@ var CategorySelect = React.createClass({
     render: function() {
         var soundfileOptions = this.props.category.soundfiles.map(function (soundfile) {
             return (
-                <SoundfileOption soundfile={soundfile} />
+                <SoundfileOption category={this.props.category} soundfile={soundfile} />
             );
-        });
+        }.bind(this));
         return (
-            <select onChange={this.onChange} className="categorySelect">
-                <option value="0">{this.props.category.name}</option>
+            <div className="collapse" id={'cat_'+CryptoJS.MD5(this.props.category.name)}>
                 {soundfileOptions}
-            </select>
+            </div>
         );
     }
 });
@@ -158,7 +165,12 @@ var CategorySelectPanel = React.createClass({
     render: function() {
         var categorySelects = this.state.data.map(function (category) {
             return (
-                <li><CategorySelect category={category} /></li>
+                <li>
+                    <button class="btn btn-primary" type="button" data-toggle="collapse" data-target={'#cat_'+CryptoJS.MD5(category.name)} aria-expanded="false" aria-controls={'#cat_'+CryptoJS.MD5(category.name)}>
+                        {category.name}
+                    </button>
+                    <CategorySelect category={category} />
+                </li>
             );
         });
         return (

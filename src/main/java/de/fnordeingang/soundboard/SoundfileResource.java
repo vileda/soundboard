@@ -1,6 +1,5 @@
 package de.fnordeingang.soundboard;
 
-import javax.ejb.Asynchronous;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.*;
@@ -22,7 +21,6 @@ public class SoundfileResource {
 	}
 
 	@POST
-	@Asynchronous
 	public Response playSoundfile(String path) {
 		controller.play(path);
 		return Response.ok().build();

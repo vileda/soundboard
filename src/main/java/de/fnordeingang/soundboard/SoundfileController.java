@@ -2,28 +2,29 @@ package de.fnordeingang.soundboard;
 
 import org.apache.commons.lang3.StringUtils;
 
-import javax.enterprise.context.ApplicationScoped;
+import javax.ejb.StatefulTimeout;
+import javax.inject.Inject;
 import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.*;
 import java.util.stream.Collectors;
 
-@ApplicationScoped
+@StatefulTimeout(30000)
 public class SoundfileController {
-	List<Process> processes = new CopyOnWriteArrayList<>();
+	@Inject
+	private SoundfileQueue soundfileQueue;
+
+	List<Category> soundfiles = new ArrayList<>();
 
 	public List<Category> getSoundfiles() {
-		List<Category> soundfiles = new ArrayList<>();
-		String soundfileDir = getSoundfileLocation();
-		Category uncategorized = new Category("Uncategorized");
-		File dir = new File(soundfileDir);
+		if(soundfiles.isEmpty()) {
+			String soundfileDir = getSoundfileLocation();
+			Category uncategorized = new Category("Uncategorized");
+			File dir = new File(soundfileDir);
 
-		walkDirectories(dir, uncategorized, soundfiles);
+			walkDirectories(dir, uncategorized, soundfiles);
 
-		soundfiles.sort((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()));
+			soundfiles.sort((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()));
+		}
 
 		return soundfiles;
 	}
@@ -70,35 +71,14 @@ public class SoundfileController {
 	}
 
 	public void play(String path) {
-		String command = "mpv " + path;
-		System.out.println(command);
-		exec(command);
+		System.out.println(path);
+		enqueue(path);
+		soundfileQueue.playQueue();
 	}
 
-	public void killall() {
-		try {
-			processes.stream().forEach(Process::destroy);
-			clearDeadProcesses();
-			exec("/usr/bin/env mpv " + getSoundfileLocation() + "/scratch.mp3").waitFor();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-	}
-
-	private Process exec(String command) {
-		try {
-			Process _process = Runtime.getRuntime().exec("/usr/bin/env " + command);
-			processes.add(_process);
-			clearDeadProcesses();
-			return _process;
-		} catch (IOException e) {
-			throw new RuntimeException("exec " + command + "failed");
-		}
-	}
-
-	private void clearDeadProcesses()
-	{
-		processes.stream().filter(process -> !process.isAlive()).forEach(processes::remove);
+	private void enqueue(String command) {
+		ProcessBuilder p = new ProcessBuilder("/usr/bin/env", "mpv", command);
+		soundfileQueue.add(p);
 	}
 
 	public List<SortedSoundfile> search(String term) {
@@ -123,5 +103,10 @@ public class SoundfileController {
 		});
 
 		return sortedSoundfiles;
+	}
+
+	public void killall()
+	{
+		soundfileQueue.killall();
 	}
 }
