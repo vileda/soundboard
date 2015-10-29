@@ -36,7 +36,7 @@ var CategorySelect = React.createClass({
 var AutoComplete = React.createClass({
     render: function() {
         return (
-            <p><a onClick={this.props.handleClick} href={this.props.item.path}>{this.props.item.title}</a></p>
+            <p><a onClick={this.props.handleClick} href="/" data-url={this.props.item.path}>{this.props.item.title}</a></p>
         );
     }
 });
@@ -69,7 +69,7 @@ var SoundSearch = React.createClass({
             url: 'sounds',
             contentType: 'application/json',
             method: 'POST',
-            data: e.target.href.replace(/http:\/\/(\w\.*\w*)+:*\d*/, '')
+            data: $(e.target).data('url')
         });
         $("#search-input").val('').delay(200).trigger('keyup');
         this.handleKeyUp({target: {value:''}});
