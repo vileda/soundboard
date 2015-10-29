@@ -5,6 +5,7 @@ import javax.ejb.*;
 import javax.inject.Inject;
 import java.io.IOException;
 import java.nio.file.*;
+import java.util.concurrent.TimeUnit;
 
 import static java.nio.file.StandardWatchEventKinds.*;
 
@@ -22,14 +23,15 @@ public class FileWatcher {
 		path.register(watcher, ENTRY_CREATE, ENTRY_MODIFY, ENTRY_DELETE);
 	}
 
-	@Schedule(persistent = false, hour = "*", minute = "*/10")
+	@Schedule(persistent = false, hour = "*", minute = "*", second = "*/4")
 	public void execute() {
 		try {
-			WatchKey key = watcher.take();
-			for (WatchEvent<?> event : key.pollEvents()) {
+			WatchKey key = watcher.poll(3, TimeUnit.SECONDS);
+			if(key == null) return;
+			if (!key.pollEvents().isEmpty()) {
 				soundfileController.getSoundfiles().clear();
 				soundfileController.getSoundfiles();
-				System.out.println("clearing cache " + event.kind().name());
+				System.out.println("clearing cache");
 			}
 		} catch (InterruptedException ignored) {
 		}
