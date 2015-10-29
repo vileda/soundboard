@@ -30,7 +30,6 @@ public class FileWatcher {
 			for (WatchEvent<?> event : key.pollEvents()) {
 				soundfileController.getSoundfiles().clear();
 				System.out.println("clearing cache " + event.kind().name());
-				return;
 			}
 		} catch (InterruptedException ignored) {
 		}
