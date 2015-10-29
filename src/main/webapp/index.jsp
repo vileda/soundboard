@@ -7,7 +7,7 @@
 </head>
 <body>
 <nav class="navbar navbar-inverse navbar-fixed-top">
-    <div class="container">
+    <div class="container-fluid">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
                 <span class="sr-only">Toggle navigation</span>
@@ -27,7 +27,7 @@
     </div>
 </nav>
 
-<div class="container" id="content"></div><!-- /.container -->
+<div class="container-fluid" id="content"></div><!-- /.container -->
 
 <script src="webjars/jquery/1.11.1/jquery.js"></script>
 <script src="webjars/bootstrap/3.3.5/js/bootstrap.min.js"></script>
