@@ -190,7 +190,7 @@ var SoundSearch = React.createClass({
     },
     handleKeyUp : function (e) {
         var k = e.target.value;
-        if (k.length > 1 ) {
+        if (k.length > 3) {
             var priority = this.state.call.latest+1;
             this.setState({call: {latest: priority, term: k }});
             $('.autocompleteNodes').removeClass('hidden');
