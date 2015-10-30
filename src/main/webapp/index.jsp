@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>soundboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel='stylesheet' href='webjars/bootstrap/3.3.5/css/bootstrap.min.css'>
     <link rel='stylesheet' href='css/soundboard.css'>
 </head>
