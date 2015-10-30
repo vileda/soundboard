@@ -35,7 +35,9 @@ public class SoundfileController {
 					})
 					.map(soundfiles2 -> soundfiles2.stream()
 							.map(soundfile -> {
-								soundfile.setTitle(soundfile.getTitle().replace("_", " ").replace("\\..*$", ""));
+								soundfile.setTitle(soundfile.getTitle()
+										.replace("_", " ")
+										.substring(0, soundfile.getTitle().lastIndexOf('.')));
 								return soundfile;
 							})
 							.collect(Collectors.toList()))
