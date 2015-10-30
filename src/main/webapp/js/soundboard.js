@@ -1,3 +1,77 @@
+var wsUrl = 'ws://' + window.location.hostname + ':' + window.location.port;
+var ws = new ReconnectingWebSocket(wsUrl + '/socket');
+
+ws.onopen = function () {
+    console.log('connected to WebSocket');
+};
+
+ws.onclose = function () {
+    console.log('closed WebSocket');
+};
+
+var eventHandlers = {};
+
+ws.onmessage = function (message) {
+    var event = JSON.parse(message.data);
+    var handlers = eventHandlers[event.event];
+    handlers.forEach(function(el) {
+        el(event);
+    });
+};
+
+
+var addWebsocketEventHandler = function addWebsocketEventHandler(event, handler) {
+    if(eventHandlers[event]) {
+        eventHandlers[event].push(handler);
+    }
+    else {
+        eventHandlers[event] = [handler];
+    }
+};
+
+var PlayQueue = React.createClass({
+    getInitialState: function() {
+        return {queue: []};
+    },
+    enqueueEventHandler: function(e) {
+        console.log(e);
+        this.state.queue.push(e.title);
+        this.setState({queue: this.state.queue});
+    },
+    killEventHandler: function() {
+        this.setState({queue: []});
+    },
+    playedEventHandler: function(e) {
+        console.log(e);
+        var newQueue = [];
+        var index = this.state.queue.indexOf(e.title);
+        if (index !== -1) {
+            this.state.queue.splice(index, 1);
+        }
+        this.setState({queue: this.state.queue});
+    },
+    componentDidMount: function() {
+      addWebsocketEventHandler('enqueue', this.enqueueEventHandler);
+      addWebsocketEventHandler('kill', this.killEventHandler);
+      addWebsocketEventHandler('played', this.playedEventHandler);
+    },
+    render: function () {
+        var queuedSounds = this.state.queue.map(function(sound) {
+            if(sound) {
+                return(
+                    <button className="btn btn-info">{sound}</button>
+                );
+            }
+        });
+
+        return (
+            <div className="playQueue">
+                {queuedSounds}
+            </div>
+        );
+    }
+});
+
 var SoundfileOption = React.createClass({
     handleClick: function(e) {
         e.preventDefault();
@@ -60,7 +134,7 @@ var AutoCompleteBox = React.createClass({
             return <AutoComplete handleClick={this.props.handleClick} item={item} />;
         }.bind(this));
         return (
-            <div className="autocompleteNodes">
+            <div className="autocompleteNodes well category-select hidden">
                 {nodes}
             </div>
         );
@@ -119,9 +193,11 @@ var SoundSearch = React.createClass({
         if (k.length > 1 ) {
             var priority = this.state.call.latest+1;
             this.setState({call: {latest: priority, term: k }});
+            $('.autocompleteNodes').removeClass('hidden');
         }
         if (k.length == 0 && this.state.autocomplete.length > 0 ) {
             this.setState({autocomplete: [], call: {latest:0, term:''}});
+            $('.autocompleteNodes').addClass('hidden');
         }
         return false;
     },
@@ -177,9 +253,16 @@ var CategorySelectPanel = React.createClass({
         });
         return (
             <div className="categorySelectPanel">
-                <button className="btn btn-danger" onClick={this.handleClick} type="button">Kill</button>
-                <SoundSearch />
-                <RemotePlay />
+                <div className="row">
+                    <div className="col-md-3">
+                        <button className="btn btn-danger" onClick={this.handleClick} type="button">Kill</button>
+                        <SoundSearch />
+                        <RemotePlay />
+                    </div>
+                    <div className="col-md-9">
+                        <PlayQueue />
+                    </div>
+                </div>
                 <ul>{categorySelects}</ul>
             </div>
         );

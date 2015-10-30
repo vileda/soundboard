@@ -30,7 +30,12 @@ public class SoundfileController {
 			soundfiles.sort((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()));
 			soundfiles.stream()
 					.map(Category::getSoundfiles)
-					.forEach(soundfiles1 -> soundfiles1.sort((o1, o2) -> o1.getTitle().compareToIgnoreCase(o2.getTitle())));
+					.map(soundfiles2 -> soundfiles2.stream()
+							.map(soundfile -> soundfile = new Soundfile(soundfile.getTitle()
+									.replace("_", " ").replace("/\\..*$/", ""), soundfile.getPath()))
+							.collect(Collectors.toList()))
+					.forEach(soundfiles1 -> soundfiles1
+							.sort((o1, o2) -> o1.getTitle().compareToIgnoreCase(o2.getTitle())));
 		}
 
 		return soundfiles;
@@ -76,7 +81,7 @@ public class SoundfileController {
 	}
 
 	private void enqueue(String command) {
-		ProcessBuilder p = new ProcessBuilder("/usr/bin/env", "mpv", command);
+		ProcessBuilder p = new ProcessBuilder("/usr/bin/env", "mpv", command.replace(" ", "\\ "));
 		System.out.println("enqueuing" + StringUtils.join(p.command(), ' '));
 		soundfileQueue.add(p);
 	}

@@ -5,6 +5,9 @@ import org.apache.commons.lang3.StringUtils;
 import javax.annotation.Resource;
 import javax.ejb.Singleton;
 import javax.enterprise.concurrent.ManagedExecutorService;
+import javax.inject.Inject;
+import javax.json.Json;
+import javax.json.JsonObject;
 import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -17,6 +20,9 @@ public class SoundfileQueue
 	@Resource
 	private ManagedExecutorService mes;
 
+	@Inject
+	private WebsocketSessionManager websocketSessionManager;
+
 	final BlockingQueue<ProcessBuilder> processQueue = new LinkedBlockingQueue<>();
 	final BlockingQueue<Process> runningProcesses = new LinkedBlockingQueue<>();
 	private volatile boolean isPlaying = false;
@@ -26,6 +32,12 @@ public class SoundfileQueue
 		try {
 			processQueue.put(item);
 			playQueue();
+			final String[] fragments = item.command().get(item.command().size() - 1).split("/");
+			final String title = fragments[fragments.length - 1];
+			final JsonObject jsonObject = Json.createObjectBuilder()
+					.add("event", "enqueue")
+					.add("title", title).build();
+			websocketSessionManager.broadcast(jsonObject.toString());
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -42,6 +54,12 @@ public class SoundfileQueue
 					Process start = processBuilder.start();
 					runningProcesses.put(start);
 					start.waitFor();
+					final String[] fragments = processBuilder.command().get(processBuilder.command().size() - 1).split("/");
+					final String title = fragments[fragments.length - 1];
+					final JsonObject jsonObject = Json.createObjectBuilder()
+							.add("event", "played")
+							.add("title", title).build();
+					websocketSessionManager.broadcast(jsonObject.toString());
 					if(!isPlaying) break;
 				} catch (UnsupportedOperationException | InterruptedException | IOException ignored) {
 
@@ -57,6 +75,9 @@ public class SoundfileQueue
 		processQueue.clear();
 		runningProcesses.stream().forEach(Process::destroyForcibly);
 		runningProcesses.clear();
+		final JsonObject jsonObject = Json.createObjectBuilder()
+				.add("event", "kill").build();
+		websocketSessionManager.broadcast(jsonObject.toString());
 		try
 		{
 			Runtime.getRuntime().exec("/usr/bin/env mpv " + getSoundfileLocation() + "/scratch.mp3");
