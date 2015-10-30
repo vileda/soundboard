@@ -41,10 +41,8 @@ public class SoundfileController {
 										.replace("_", " ")
 										.substring(0, soundfile.getTitle().lastIndexOf('.')));
 								return soundfile;
-							})
-							.collect(Collectors.toList()))
-					.forEach(soundfiles1 -> soundfiles1
-							.sort((o1, o2) -> o1.getTitle().compareToIgnoreCase(o2.getTitle())));
+							}));
+			soundfiles.stream().map(Category::getSoundfiles).forEach(soundfiles -> soundfiles.sort((o1, o2) -> o1.getTitle().compareTo(o2.getTitle())));
 		}
 
 		makeFlatList(soundfiles);
