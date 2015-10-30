@@ -81,7 +81,7 @@ public class SoundfileController {
 	}
 
 	private void enqueue(String command) {
-		ProcessBuilder p = new ProcessBuilder("/usr/bin/env", "mpv", command.replace(" ", "\\ "));
+		ProcessBuilder p = new ProcessBuilder("/usr/bin/env", "mpv", command);
 		System.out.println("enqueuing" + StringUtils.join(p.command(), ' '));
 		soundfileQueue.add(p);
 	}
