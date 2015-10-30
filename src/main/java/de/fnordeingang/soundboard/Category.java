@@ -1,12 +1,20 @@
 package de.fnordeingang.soundboard;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Value;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Value
+@Data
+@AllArgsConstructor
 public class Category {
-	private final String name;
-	private final List<Soundfile> soundfiles = new ArrayList<>();
+	private String name;
+	private List<Soundfile> soundfiles = new ArrayList<>();
+
+	public Category(String name)
+	{
+		this.name = name;
+	}
 }

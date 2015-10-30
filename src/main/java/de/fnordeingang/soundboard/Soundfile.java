@@ -1,9 +1,11 @@
 package de.fnordeingang.soundboard;
 
-import lombok.Value;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
-@Value
+@Data
+@AllArgsConstructor
 public class Soundfile {
-	private final String title;
-	private final String path;
+	private String title;
+	private String path;
 }

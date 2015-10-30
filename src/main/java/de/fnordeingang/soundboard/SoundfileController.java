@@ -29,10 +29,15 @@ public class SoundfileController {
 
 			soundfiles.sort((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()));
 			soundfiles.stream()
-					.map(Category::getSoundfiles)
+					.map(category -> {
+						category.setName(category.getName().replace("_", " "));
+						return category.getSoundfiles();
+					})
 					.map(soundfiles2 -> soundfiles2.stream()
-							.map(soundfile -> soundfile = new Soundfile(soundfile.getTitle()
-									.replace("_", " ").replace("/\\..*$/", ""), soundfile.getPath()))
+							.map(soundfile -> {
+								soundfile.setTitle(soundfile.getTitle().replace("_", " ").replace("\\..*$", ""));
+								return soundfile;
+							})
 							.collect(Collectors.toList()))
 					.forEach(soundfiles1 -> soundfiles1
 							.sort((o1, o2) -> o1.getTitle().compareToIgnoreCase(o2.getTitle())));
