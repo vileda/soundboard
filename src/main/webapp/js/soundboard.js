@@ -9,6 +9,8 @@ ws.onclose = function () {
     console.log('closed WebSocket');
 };
 
+var streaming = false;
+
 var eventHandlers = {};
 
 ws.onmessage = function (message) {
@@ -75,12 +77,18 @@ var PlayQueue = React.createClass({
 var SoundfileOption = React.createClass({
     handleClick: function(e) {
         e.preventDefault();
-        $.ajax({
-            url: 'sounds',
-            contentType: 'application/json',
-            method: 'POST',
-            data: $(e.target).data('url')
-        });
+        if(!streaming) {
+            $.ajax({
+                url: 'sounds',
+                contentType: 'application/json',
+                method: 'POST',
+                data: $(e.target).data('url')
+            });
+        }
+        else {
+            var id = 'audio_'+CryptoJS.MD5(this.props.soundfile.path);
+            document.getElementById(id).play();
+        }
     },
     render: function() {
         return (
@@ -89,22 +97,13 @@ var SoundfileOption = React.createClass({
                    id={'cat_'+CryptoJS.MD5(this.props.category.name)} onClick={this.handleClick} href="/" data-url={this.props.soundfile.path}>
                     {this.props.soundfile.title}
                 </a>
+                <audio preload="none" id={'audio_'+CryptoJS.MD5(this.props.soundfile.path)} src={'/sounds/stream?url='+this.props.soundfile.path}></audio>
             </li>
         );
     }
 });
 
 var CategorySelect = React.createClass({
-    onChange: function(e) {
-        var path = e.target.value;
-        $.ajax({
-            url: 'sounds',
-            contentType: 'application/json',
-            method: 'POST',
-            data: path
-        });
-        e.target.value = 0;
-    },
     render: function() {
         var soundfileOptions = this.props.category.soundfiles.map(function (soundfile) {
             return (
@@ -129,12 +128,8 @@ var AutoComplete = React.createClass({
     }
 });
 
-/**
- * this component is the parent of AutoComplete
- */
 var AutoCompleteBox = React.createClass({
     render: function() {
-        //note: we are producing a new immutable array here
         var nodes = this.props.list.map(function(item){
             return <AutoComplete handleClick={this.props.handleClick} item={item} />;
         }.bind(this));
@@ -254,6 +249,7 @@ var CategorySelectPanel = React.createClass({
             <div className="categorySelectPanel">
                 <div className="row">
                     <div className="col-md-3">
+                        <div className="col-md-12"><StreamingToggle /></div>
                         <div className="col-md-12"><SoundSearch /></div>
                         <div className="col-md-12"><RemotePlay /></div>
                     </div>
@@ -264,6 +260,21 @@ var CategorySelectPanel = React.createClass({
                 <ul>{categorySelects}</ul>
             </div>
         );
+    }
+});
+
+var StreamingToggle = React.createClass({
+    handleChange: function(e) {
+        streaming = $(e.target).is(":checked");
+    },
+    render: function() {
+        return (
+            <div className="checkbox">
+                <label>
+                    <input onChange={this.handleChange} type="checkbox" /> Enable streaming
+                </label>
+            </div>
+        )
     }
 });
 

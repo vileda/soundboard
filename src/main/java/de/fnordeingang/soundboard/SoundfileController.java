@@ -2,7 +2,7 @@ package de.fnordeingang.soundboard;
 
 import org.apache.commons.lang3.StringUtils;
 
-import javax.ejb.Stateful;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.io.File;
 import java.util.ArrayList;
@@ -12,15 +12,17 @@ import java.util.stream.Collectors;
 
 import static de.fnordeingang.soundboard.Config.getSoundfileLocation;
 
-@Stateful
+@ApplicationScoped
 public class SoundfileController {
 	@Inject
 	private SoundfileQueue soundfileQueue;
 
-	final List<Category> soundfiles = new ArrayList<>();
+	private final List<Category> soundfiles = new ArrayList<>();
+	private List<Soundfile> flatSoundfiles = new ArrayList<>();
 
 	public List<Category> getSoundfiles() {
 		if(soundfiles.isEmpty()) {
+			flatSoundfiles.clear();
 			String soundfileDir = getSoundfileLocation();
 			Category uncategorized = new Category("Uncategorized");
 			File dir = new File(soundfileDir);
@@ -44,6 +46,8 @@ public class SoundfileController {
 					.forEach(soundfiles1 -> soundfiles1
 							.sort((o1, o2) -> o1.getTitle().compareToIgnoreCase(o2.getTitle())));
 		}
+
+		makeFlatList(soundfiles);
 
 		return soundfiles;
 	}
@@ -94,31 +98,41 @@ public class SoundfileController {
 	}
 
 	public List<SortedSoundfile> search(String term) {
-		List<Category> soundfiles = getSoundfiles();
-		List<SortedSoundfile> sortedSoundfiles = new ArrayList<>();
-
-		for (Category category : soundfiles) {
-			sortedSoundfiles.addAll(
-					category.getSoundfiles().stream()
-							.map(soundfile -> {
-								String title = category.getName() + "/" + soundfile.getTitle();
-								double sortKey = StringUtils.getFuzzyDistance(title, term, Locale.getDefault());
-								return new SortedSoundfile(title, soundfile.getPath(), sortKey);
-							})
-							.collect(Collectors.toList()));
-		}
+		List<SortedSoundfile> sortedSoundfiles = flatSoundfiles.stream().map(soundfile -> {
+			double sortKey = StringUtils.getFuzzyDistance(soundfile.getTitle(), term, Locale.getDefault());
+			return new SortedSoundfile(soundfile.getTitle(), soundfile.getPath(), sortKey);
+		}).collect(Collectors.toList());
 
 		sortedSoundfiles.sort((o1, o2) -> {
-			if(o1.getSortKey() > o2.getSortKey()) return -1;
-			if(o1.getSortKey() == o2.getSortKey()) return 0;
+			if (o1.getSortKey() > o2.getSortKey()) return -1;
+			if (o1.getSortKey() == o2.getSortKey()) return 0;
 			else return 1;
 		});
 
 		return sortedSoundfiles;
 	}
 
+	private void makeFlatList(List<Category> soundfiles) {
+		for (Category category : soundfiles) {
+			flatSoundfiles.addAll(
+					category.getSoundfiles().stream()
+							.map(soundfile -> {
+								String title = category.getName() + "/" + soundfile.getTitle();
+								return new Soundfile(title, soundfile.getPath());
+							})
+							.collect(Collectors.toList()));
+		}
+	}
+
 	public void killall()
 	{
 		soundfileQueue.killall();
+	}
+
+	public boolean isSoundfilePresent(String url) {
+		for (Soundfile soundfile : flatSoundfiles) {
+			if (soundfile.getPath().equals(url)) return true;
+		}
+		return false;
 	}
 }

@@ -50,7 +50,7 @@ public class SoundfileQueue
 		if(isPlaying) return;
 		isPlaying = true;
 		Runnable playsounds = () -> {
-			while (true) {
+			while (isPlaying) {
 				try {
 					ProcessBuilder processBuilder = processQueue.take();
 					System.out.println("playing " + StringUtils.join(processBuilder.command(), ' '));
