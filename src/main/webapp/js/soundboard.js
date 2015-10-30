@@ -84,7 +84,12 @@ var SoundfileOption = React.createClass({
     },
     render: function() {
         return (
-            <li><a className="btn btn-success btn-default" id={'cat_'+CryptoJS.MD5(this.props.category.name)} onClick={this.handleClick} href="/" data-url={this.props.soundfile.path}>{this.props.soundfile.title}</a></li>
+            <li>
+                <a className="btn btn-success btn-default"
+                   id={'cat_'+CryptoJS.MD5(this.props.category.name)} onClick={this.handleClick} href="/" data-url={this.props.soundfile.path}>
+                    {this.props.soundfile.title}
+                </a>
+            </li>
         );
     }
 });
@@ -156,8 +161,8 @@ var RemotePlay = React.createClass({
    },
    render: function () {
        return (
-           <label>Remote:
-            <input onKeyUp={this.handleKeyUp} type="text" placeholder="URL" />
+           <label>
+               Remote: <input onKeyUp={this.handleKeyUp} type="text" placeholder="URL" />
            </label>
        );
    }
@@ -208,8 +213,9 @@ var SoundSearch = React.createClass({
         }
         return (
             <div className="searchbox">
-                <span>Sound:</span>
-                <input id="search-input" type="text" placeholder="search" onKeyUp={this.handleKeyUp} />
+                <label>
+                    Search: <input id="search-input" type="text" placeholder="search" onKeyUp={this.handleKeyUp} />
+                </label>
                 <AutoCompleteBox handleClick={this.handleClick} list={this.state.autocomplete} />
             </div>
         );
@@ -233,19 +239,12 @@ var CategorySelectPanel = React.createClass({
             }.bind(this)
         });
     },
-    handleClick: function() {
-      $.ajax({
-          url: 'sounds/kill',
-          method: 'POST',
-          contentType: 'application/json'
-      });
-    },
     render: function() {
         var categorySelects = this.state.data.map(function (category) {
             return (
-                <li>
+                <li className="dropdown">
                     <button className="btn btn-primary btn-lg" type="button" data-toggle="collapse" data-target={'#cat_'+CryptoJS.MD5(category.name)} aria-expanded="false" aria-controls={'#cat_'+CryptoJS.MD5(category.name)}>
-                        {category.name}
+                        {category.name} <span className="caret"></span>
                     </button>
                     <CategorySelect category={category} />
                 </li>
@@ -255,12 +254,11 @@ var CategorySelectPanel = React.createClass({
             <div className="categorySelectPanel">
                 <div className="row">
                     <div className="col-md-3">
-                        <button className="btn btn-danger" onClick={this.handleClick} type="button">Kill</button>
-                        <SoundSearch />
-                        <RemotePlay />
+                        <div className="col-md-12"><SoundSearch /></div>
+                        <div className="col-md-12"><RemotePlay /></div>
                     </div>
                     <div className="col-md-9">
-                        <PlayQueue />
+                        <div className="col-md-12"><PlayQueue /></div>
                     </div>
                 </div>
                 <ul>{categorySelects}</ul>
@@ -269,7 +267,28 @@ var CategorySelectPanel = React.createClass({
     }
 });
 
+var KillButton = React.createClass({
+    handleClick: function(e) {
+        e.preventDefault();
+        $.ajax({
+            url: 'sounds/kill',
+            method: 'POST',
+            contentType: 'application/json'
+        });
+    },
+    render: function() {
+        return (
+            <a className="danger" href="/kill" onClick={this.handleClick}>Kill</a>
+        );
+    }
+});
+
 ReactDOM.render(
     <CategorySelectPanel url="/sounds" />,
     document.getElementById('content')
+);
+
+ReactDOM.render(
+    <KillButton />,
+    document.getElementById('kill-button')
 );

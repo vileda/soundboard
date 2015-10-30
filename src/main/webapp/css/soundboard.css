@@ -1,5 +1,5 @@
 body {
-    padding-top: 50px;
+    padding-top: 80px;
 }
 .starter-template {
     padding: 40px 15px;
@@ -22,4 +22,9 @@ body {
 .category-select {
     position: absolute;
     max-width: 600px;
+    z-index: 1000;
+}
+
+.playQueue button {
+    margin: 10px;
 }

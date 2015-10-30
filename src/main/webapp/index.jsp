@@ -4,6 +4,7 @@
     <title>soundboard</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel='stylesheet' href='webjars/bootstrap/3.3.5/css/bootstrap.min.css'>
+    <link rel='stylesheet' href='css/bootstrap.min.css'>
     <link rel='stylesheet' href='css/soundboard.css'>
 </head>
 <body>
@@ -22,13 +23,17 @@
             <ul class="nav navbar-nav">
                 <li class="active"><a href="#">Home</a></li>
                 <li><a href="#about">About</a></li>
-                <li><a href="#contact">Contact</a></li>
+                <li class="alert-danger" id="kill-button"></li>
             </ul>
         </div><!--/.nav-collapse -->
     </div>
 </nav>
 
-<div class="container-fluid" id="content"></div><!-- /.container -->
+<div class="container-fluid">
+    <div class="col-md-12">
+        <div class="row" id="content"></div>
+    </div>
+</div><!-- /.container -->
 
 <script src="webjars/reconnecting-websocket/1.0.0/reconnecting-websocket.js"></script>
 <script src="webjars/jquery/1.11.1/jquery.js"></script>
