@@ -277,11 +277,18 @@ var StreamingToggle = React.createClass({
 var KillButton = React.createClass({
     handleClick: function(e) {
         e.preventDefault();
-        $.ajax({
-            url: 'sounds/kill',
-            method: 'POST',
-            contentType: 'application/json'
-        });
+        if(streaming) {
+            $.each($('audio'), function () {
+                this.pause();
+            });
+        }
+        else {
+            $.ajax({
+                url: 'sounds/kill',
+                method: 'POST',
+                contentType: 'application/json'
+            });
+        }
     },
     render: function() {
         return (
