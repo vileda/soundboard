@@ -179,7 +179,7 @@ var SoundSearch = React.createClass({
         this.handleKeyUp({target: {value:''}});
     },
     makeCall: function(term, current) {
-        var searchUrl = "/sounds/search?q="+encodeURIComponent(term);
+        var searchUrl = "sounds/search?q="+encodeURIComponent(term);
         $.getJSON(searchUrl, function(data) {
                 if (current == this.state.call.latest) {
                     var newPriority = this.state.call.latest - 1;

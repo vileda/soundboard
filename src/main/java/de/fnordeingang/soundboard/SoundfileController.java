@@ -41,9 +41,8 @@ public class SoundfileController {
 						category.setName(category.getName().replace("_", " "));
 						category.getSoundfiles().sort((o1, o2) -> o1.getTitle().compareToIgnoreCase(o2.getTitle()));
 					});
+			makeFlatList(soundfiles);
 		}
-
-		makeFlatList(soundfiles);
 
 		return soundfiles;
 	}
