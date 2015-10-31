@@ -1,5 +1,5 @@
 var wsUrl = 'ws://' + window.location.hostname + ':' + window.location.port;
-var ws = new ReconnectingWebSocket(wsUrl + '/socket');
+var ws = new ReconnectingWebSocket(wsUrl + window.location.pathname + '/socket');
 
 ws.onopen = function () {
     console.log('connected to WebSocket');
@@ -295,7 +295,7 @@ var KillButton = React.createClass({
 });
 
 ReactDOM.render(
-    <CategorySelectPanel url="/sounds" />,
+    <CategorySelectPanel url="sounds" />,
     document.getElementById('content')
 );
 

@@ -17,7 +17,7 @@ public class SoundfileController {
 	@Inject
 	private SoundfileQueue soundfileQueue;
 
-	private final List<Category> soundfiles = new ArrayList<>();
+	private List<Category> soundfiles = new ArrayList<>();
 	private List<Soundfile> flatSoundfiles = new ArrayList<>();
 
 	public List<Category> getSoundfiles() {
@@ -31,18 +31,16 @@ public class SoundfileController {
 
 			soundfiles.sort((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()));
 			soundfiles.stream()
-					.map(category -> {
+					.forEach(category -> category.getSoundfiles().forEach(soundfile1 -> {
+						soundfile1.setTitle(soundfile1.getTitle()
+								.replace("_", " ")
+								.substring(0, soundfile1.getTitle().lastIndexOf('.')));
+					}));
+			soundfiles.stream()
+					.forEach(category -> {
 						category.setName(category.getName().replace("_", " "));
-						return category.getSoundfiles();
-					})
-					.map(soundfiles2 -> soundfiles2.stream()
-							.map(soundfile -> {
-								soundfile.setTitle(soundfile.getTitle()
-										.replace("_", " ")
-										.substring(0, soundfile.getTitle().lastIndexOf('.')));
-								return soundfile;
-							}));
-			soundfiles.stream().map(Category::getSoundfiles).forEach(soundfiles -> soundfiles.sort((o1, o2) -> o1.getTitle().compareTo(o2.getTitle())));
+						category.getSoundfiles().sort((o1, o2) -> o1.getTitle().compareToIgnoreCase(o2.getTitle()));
+					});
 		}
 
 		makeFlatList(soundfiles);
