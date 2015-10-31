@@ -1,5 +1,6 @@
 package de.fnordeingang.soundboard;
 
+import lombok.extern.java.Log;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -13,6 +14,7 @@ import java.util.stream.Collectors;
 import static de.fnordeingang.soundboard.Config.getSoundfileLocation;
 
 @ApplicationScoped
+@Log
 public class SoundfileController {
 	@Inject
 	private SoundfileQueue soundfileQueue;
@@ -22,7 +24,7 @@ public class SoundfileController {
 
 	public List<Category> getSoundfiles() {
 		if(soundfiles.isEmpty()) {
-			flatSoundfiles.clear();
+			log.info("caching soundfiles");
 			String soundfileDir = getSoundfileLocation();
 			Category uncategorized = new Category("Uncategorized");
 			File dir = new File(soundfileDir);
@@ -41,6 +43,7 @@ public class SoundfileController {
 						category.setName(category.getName().replace("_", " "));
 						category.getSoundfiles().sort((o1, o2) -> o1.getTitle().compareToIgnoreCase(o2.getTitle()));
 					});
+			flatSoundfiles.clear();
 			makeFlatList(soundfiles);
 		}
 
@@ -93,18 +96,22 @@ public class SoundfileController {
 	}
 
 	public List<SortedSoundfile> search(String term) {
-		List<SortedSoundfile> sortedSoundfiles = flatSoundfiles.stream().map(soundfile -> {
+		List<SortedSoundfile> fuzzySearchResults = flatSoundfiles.stream().map(soundfile -> {
 			double sortKey = StringUtils.getFuzzyDistance(soundfile.getTitle(), term, Locale.getDefault());
 			return new SortedSoundfile(soundfile.getTitle(), soundfile.getPath(), sortKey);
 		}).collect(Collectors.toList());
 
-		sortedSoundfiles.sort((o1, o2) -> {
+		fuzzySearchResults.sort((o1, o2) -> {
 			if (o1.getSortKey() > o2.getSortKey()) return -1;
 			if (o1.getSortKey() == o2.getSortKey()) return 0;
 			else return 1;
 		});
 
-		return sortedSoundfiles;
+		fuzzySearchResults = fuzzySearchResults.size() > 10 ?
+				fuzzySearchResults.subList(0, 10) :
+				fuzzySearchResults;
+
+		return fuzzySearchResults;
 	}
 
 	private void makeFlatList(List<Category> soundfiles) {

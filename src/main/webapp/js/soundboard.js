@@ -31,6 +31,15 @@ var addWebsocketEventHandler = function addWebsocketEventHandler(event, handler)
     }
 };
 
+function playOnServer(url) {
+    $.ajax({
+        url: 'sounds',
+        contentType: 'application/json',
+        method: 'POST',
+        data: url
+    });
+}
+
 var PlayQueue = React.createClass({
     getInitialState: function() {
         return {queue: []};
@@ -78,12 +87,7 @@ var SoundfileOption = React.createClass({
     handleClick: function(e) {
         e.preventDefault();
         if(!streaming) {
-            $.ajax({
-                url: 'sounds',
-                contentType: 'application/json',
-                method: 'POST',
-                data: $(e.target).data('url')
-            });
+            playOnServer($(e.target).data('url'));
         }
         else {
             var id = 'audio_'+CryptoJS.MD5(this.props.soundfile.path);
@@ -91,13 +95,16 @@ var SoundfileOption = React.createClass({
         }
     },
     render: function() {
+        var id = 'sound_'+(this.props.category ?
+                CryptoJS.MD5(this.props.category.name) :
+                CryptoJS.MD5(this.props.soundfile.path));
         return (
             <li>
                 <a className="btn btn-success btn-default"
-                   id={'cat_'+CryptoJS.MD5(this.props.category.name)} onClick={this.handleClick} href="/" data-url={this.props.soundfile.path}>
+                   id={id} onClick={this.handleClick} href="/" data-url={this.props.soundfile.path}>
                     {this.props.soundfile.title}
                 </a>
-                <audio preload="none" id={'audio_'+CryptoJS.MD5(this.props.soundfile.path)} src={'/sounds/stream?url='+this.props.soundfile.path}></audio>
+                <audio preload="none" id={'audio_'+CryptoJS.MD5(this.props.soundfile.path)} src={'sounds/stream?url='+this.props.soundfile.path}></audio>
             </li>
         );
     }
@@ -131,7 +138,7 @@ var AutoComplete = React.createClass({
 var AutoCompleteBox = React.createClass({
     render: function() {
         var nodes = this.props.list.map(function(item){
-            return <AutoComplete handleClick={this.props.handleClick} item={item} />;
+            return <SoundfileOption soundfile={item} />
         }.bind(this));
         return (
             <div className="autocompleteNodes well category-select hidden">
@@ -145,12 +152,7 @@ var RemotePlay = React.createClass({
    handleKeyUp: function(e) {
        console.log(e);
        if(e.keyCode === 13) {
-           $.ajax({
-               url: 'sounds',
-               contentType: 'application/json',
-               method: 'POST',
-               data: $(e.target).val()
-           });
+           playOnServer($(e.target).val());
            e.target.value = '';
        }
    },
@@ -162,19 +164,13 @@ var RemotePlay = React.createClass({
        );
    }
 });
-
 var SoundSearch = React.createClass({
     getInitialState: function() {
         return {autocomplete: [], call: {latest:0, term:''}};
     },
     handleClick: function (e) {
         e.preventDefault();
-        $.ajax({
-            url: 'sounds',
-            contentType: 'application/json',
-            method: 'POST',
-            data: $(e.target).data('url')
-        });
+        playOnServer($(e.target).data('url'));
         $("#search-input").val('').delay(200).trigger('keyup');
         this.handleKeyUp({target: {value:''}});
     },
@@ -190,7 +186,7 @@ var SoundSearch = React.createClass({
     },
     handleKeyUp : function (e) {
         var k = e.target.value;
-        if (k.length > 3) {
+        if (k.length > 1) {
             var priority = this.state.call.latest+1;
             this.setState({call: {latest: priority, term: k }});
             $('.autocompleteNodes').removeClass('hidden');

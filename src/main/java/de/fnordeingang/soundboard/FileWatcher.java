@@ -1,7 +1,7 @@
 package de.fnordeingang.soundboard;
 
-import javax.annotation.Resource;
-import javax.ejb.*;
+import javax.ejb.Schedule;
+import javax.ejb.Singleton;
 import javax.inject.Inject;
 import java.io.IOException;
 import java.nio.file.*;

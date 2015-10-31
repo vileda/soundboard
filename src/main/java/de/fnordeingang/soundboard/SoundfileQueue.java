@@ -32,12 +32,16 @@ public class SoundfileQueue
 		try {
 			processQueue.put(item);
 			playQueue();
-			final String[] fragments = item.command().get(item.command().size() - 1).split("/");
-			final String title = fragments[fragments.length - 1];
+			final String title = getTitle(item);
 			websocketSessionManager.broadcast(makeEventJSON("enqueue", title).toString());
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+	}
+
+	private String getTitle(ProcessBuilder item) {
+		final String[] fragments = item.command().get(item.command().size() - 1).split("/");
+		return fragments[fragments.length - 1];
 	}
 
 	private JsonObject makeEventJSON(String eventName, String title) {
@@ -57,9 +61,7 @@ public class SoundfileQueue
 					Process start = processBuilder.start();
 					runningProcesses.put(start);
 					start.waitFor();
-					final String[] fragments = processBuilder.command().get(processBuilder.command().size() - 1).split("/");
-					final String title = fragments[fragments.length - 1];
-					websocketSessionManager.broadcast(makeEventJSON("played", title).toString());
+					websocketSessionManager.broadcast(makeEventJSON("played", getTitle(processBuilder)).toString());
 					if(!isPlaying) break;
 				} catch (UnsupportedOperationException | InterruptedException | IOException ignored) {
 
