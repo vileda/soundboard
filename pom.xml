@@ -55,83 +55,41 @@
     </dependencies>
     <build>
         <finalName>soundboard</finalName>
-        <plugins>
-            <plugin>
-                <artifactId>maven-war-plugin</artifactId>
-                <version>2.4</version>
-                <configuration>
-                    <warSourceExcludes>js/*.js,index.jsp,css/*.css,bower_components/,node_modules/</warSourceExcludes>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>1.4.0</version>
-                <executions>
-                    <execution>
-                        <id>babel-compile</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>grunt</executable>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>babel-remove</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>sed</executable>
-                            <commandlineArgs>-i '/browser\.min\.js/d' ${project.build.directory}/soundboard/index.jsp</commandlineArgs>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>babel-remove-attribute</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>sed</executable>
-                            <commandlineArgs>-i 's/type="text\/babel" //g' ${project.build.directory}/soundboard/index.jsp</commandlineArgs>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <version>2.4</version>
-                <executions>
-                    <execution>
-                        <!-- First step is to disable the default-war build step. -->
-                        <id>default-war</id>
-                        <phase>none</phase>
-                    </execution>
-                    <execution>
-                        <!-- Second step is to create an exploded war. Done in prepare-package -->
-                        <id>war-exploded</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>exploded</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <!-- Last step is to make sure that the war is built in the package phase -->
-                        <id>custom-war</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>war</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>production</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>1.4.0</version>
+                        <executions>
+                            <execution>
+                                <id>babel-compile</id>
+                                <phase>generate-sources</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>grunt</executable>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-war-plugin</artifactId>
+                        <version>2.4</version>
+                        <configuration>
+                            <warSourceExcludes>js/*.js,index.jsp,css/*.css,bower_components/,node_modules/</warSourceExcludes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
