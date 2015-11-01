@@ -108,6 +108,6 @@ module.exports = function(grunt) {
     });
 
     // Default task(s).
-    grunt.registerTask('default', ['babel', 'bower_concat', 'csso', 'uglify', 'copy']);
+    grunt.registerTask('default', ['babel', 'bower_concat', 'csso', 'uglify', 'replace', 'copy']);
 
 };

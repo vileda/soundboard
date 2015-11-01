@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="css/bootstrap.min.readable.css">
     <link rel="stylesheet" href="css/soundboard.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway:400,700">
 </head>
 <body>
 <nav class="navbar navbar-inverse navbar-fixed-top">
@@ -34,7 +35,6 @@
     </div>
 </div><!-- /.container -->
 
-<script src="webjars/babel/5.8.29-1/browser.min.js"></script>
 <!-- concat -->
 <script src="node_modules/babel-core/browser.min.js"></script>
 <script src="bower_components/reconnectingWebsocket/reconnecting-websocket.min.js"></script>
