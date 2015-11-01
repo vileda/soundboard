@@ -1,5 +1,5 @@
 var wsUrl = 'ws://' + window.location.hostname + ':' + window.location.port;
-var ws = new ReconnectingWebSocket(wsUrl + window.location.pathname + '/socket');
+var ws = new ReconnectingWebSocket(wsUrl + window.location.pathname + 'socket');
 
 ws.onopen = function () {
     console.log('connected to WebSocket');
