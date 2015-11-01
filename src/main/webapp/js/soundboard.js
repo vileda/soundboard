@@ -111,6 +111,9 @@ var SoundfileOption = React.createClass({
 });
 
 var CategorySelect = React.createClass({
+    getInitialState: function () {
+      return {soundfileOptions: []};
+    },
     render: function() {
         var soundfileOptions = this.props.category.soundfiles.map(function (soundfile) {
             return (
@@ -118,7 +121,7 @@ var CategorySelect = React.createClass({
             );
         }.bind(this));
         return (
-            <div id={'option_ul_'+md5(this.props.category.name)} className="collapse well category-select" id={'cat_'+md5(this.props.category.name)}>
+            <div key={'option_ul_'+md5(this.props.category.name)} className="collapse well category-select" id={'cat_'+md5(this.props.category.name)}>
                 <ul id={'option_'+md5(this.props.category.name)}>
                     {soundfileOptions}
                 </ul>
@@ -215,7 +218,7 @@ var SoundSearch = React.createClass({
 
 var CategorySelectPanel = React.createClass({
     getInitialState: function() {
-        return {data: []};
+        return {data: [], categorySelects: []};
     },
     componentDidMount: function() {
         $.ajax({
@@ -230,17 +233,31 @@ var CategorySelectPanel = React.createClass({
             }.bind(this)
         });
     },
+    handleClick: function (e) {
+        if(this.state.categorySelects[e.target.id]) return;
+
+        this.state.data.forEach(function (category)  {
+            if(this.state.categorySelects[e.target.id]) return;
+            if(!(e.target.id.indexOf(md5(category.name)) > -1)) return;
+            ReactDOM.render(
+                <CategorySelect id={'cat_select_'+md5(category.name)} category={category} />,
+                document.getElementById('cat_select_cont_'+md5(category.name)));
+            $('#cat_'+md5(category.name)).collapse();
+            this.state.categorySelects[e.target.id] = true;
+        }.bind(this));
+        this.setState({categorySelects: this.state.categorySelects});
+    },
     render: function() {
         var categorySelects = this.state.data.map(function (category) {
             return (
-                <li className="dropdown">
-                    <button className="btn btn-primary btn-lg" type="button" data-toggle="collapse" data-target={'#cat_'+md5(category.name)} aria-expanded="false" aria-controls={'#cat_'+md5(category.name)}>
-                        {category.name} <span className="caret"></span>
+                <li onClick={this.handleClick} id={'cat_select_key_'+md5(category.name)} key={'cat_select_key_'+md5(category.name)} className="dropdown">
+                    <button id={'cat_btn_'+md5(category.name)} className="btn btn-primary btn-lg" type="button" data-toggle="collapse" data-target={'#cat_'+md5(category.name)} aria-expanded="false" aria-controls={'#cat_'+md5(category.name)}>
+                        <span id={'cat_select_tile_'+md5(category.name)}>{category.name}</span> <span className="caret" id={'cat_select_cont_caret_'+md5(category.name)}></span>
                     </button>
-                    <CategorySelect id={'cat_select_'+md5(category.name)} category={category} />
+                    <span id={'cat_select_cont_'+md5(category.name)}></span>
                 </li>
             );
-        });
+        }.bind(this));
         return (
             <div className="categorySelectPanel">
                 <div className="row">
