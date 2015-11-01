@@ -13,6 +13,7 @@
     "grunt-contrib-copy": "^0.8.2",
     "grunt-contrib-cssmin": "^0.14.0",
     "grunt-contrib-uglify": "^0.10.0",
+    "grunt-csso": "^0.8.0",
     "grunt-maven": "^1.2.0",
     "grunt-regex-replace": "^0.2.6",
     "grunt-replace": "^0.11.0",

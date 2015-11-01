@@ -8,6 +8,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-bower-concat');
     grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks('grunt-csso');
 
     // Project configuration.
     grunt.initConfig({
@@ -24,7 +25,6 @@ module.exports = function(grunt) {
         bower_concat: {
             all: {
                 dest: 'dist/js/libs.js',
-                cssDest: 'dist/css/soundboard.min.css',
                 exclude: [],
                 dependencies: {
                     'jquery': 'reconnectingWebsocket',
@@ -47,6 +47,26 @@ module.exports = function(grunt) {
                     'dist/js/libs.min.js': ['dist/js/libs.js'],
                     'dist/js/soundboard.min.js': ['dist/js/soundboard.js']
                 }
+            }
+        },
+        csso: {
+            compress: {
+                options: {
+                    report: 'gzip'
+                },
+                files: {
+                    'dist/css/soundboard.css': [
+                        'src/main/webapp/css/bootstrap.min.readable.css',
+                        'src/main/webapp/css/soundboard.css'
+                    ]
+                }
+            },
+            dynamic_mappings: {
+                expand: true,
+                cwd: 'dist/css/',
+                src: ['*.css', '!*.min.css'],
+                dest: 'dist/css/',
+                ext: '.min.css'
             }
         },
         replace: {
@@ -88,6 +108,6 @@ module.exports = function(grunt) {
     });
 
     // Default task(s).
-    grunt.registerTask('default', ['babel', 'bower_concat', 'uglify', 'copy']);
+    grunt.registerTask('default', ['babel', 'bower_concat', 'csso', 'uglify', 'copy']);
 
 };
