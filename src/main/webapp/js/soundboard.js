@@ -90,21 +90,21 @@ var SoundfileOption = React.createClass({
             playOnServer($(e.target).data('url'));
         }
         else {
-            var id = 'audio_'+CryptoJS.MD5(this.props.soundfile.path);
+            var id = 'audio_'+md5(this.props.soundfile.path);
             document.getElementById(id).play();
         }
     },
     render: function() {
         var id = 'sound_'+(this.props.category ?
-                CryptoJS.MD5(this.props.category.name) :
-                CryptoJS.MD5(this.props.soundfile.path));
+                md5(this.props.category.name) :
+                md5(this.props.soundfile.path));
         return (
             <li>
                 <a className="btn btn-success btn-default"
                    id={id} onClick={this.handleClick} href="/" data-url={this.props.soundfile.path}>
                     {this.props.soundfile.title}
                 </a>
-                <audio preload="none" id={'audio_'+CryptoJS.MD5(this.props.soundfile.path)} src={'sounds/stream?url='+this.props.soundfile.path}></audio>
+                <audio preload="none" id={'audio_'+md5(this.props.soundfile.path)} src={'sounds/stream?url='+this.props.soundfile.path}></audio>
             </li>
         );
     }
@@ -118,8 +118,8 @@ var CategorySelect = React.createClass({
             );
         }.bind(this));
         return (
-            <div className="collapse well category-select" id={'cat_'+CryptoJS.MD5(this.props.category.name)}>
-                <ul>
+            <div id={'option_ul_'+md5(this.props.category.name)} className="collapse well category-select" id={'cat_'+md5(this.props.category.name)}>
+                <ul id={'option_'+md5(this.props.category.name)}>
                     {soundfileOptions}
                 </ul>
             </div>
@@ -234,10 +234,10 @@ var CategorySelectPanel = React.createClass({
         var categorySelects = this.state.data.map(function (category) {
             return (
                 <li className="dropdown">
-                    <button className="btn btn-primary btn-lg" type="button" data-toggle="collapse" data-target={'#cat_'+CryptoJS.MD5(category.name)} aria-expanded="false" aria-controls={'#cat_'+CryptoJS.MD5(category.name)}>
+                    <button className="btn btn-primary btn-lg" type="button" data-toggle="collapse" data-target={'#cat_'+md5(category.name)} aria-expanded="false" aria-controls={'#cat_'+md5(category.name)}>
                         {category.name} <span className="caret"></span>
                     </button>
-                    <CategorySelect category={category} />
+                    <CategorySelect id={'cat_select_'+md5(category.name)} category={category} />
                 </li>
             );
         });

@@ -7,13 +7,19 @@
     "babel-preset-react": ">= 6.0.14",
     "grunt": "~0.4.2",
     "grunt-babel": "^6.0.0",
+    "grunt-bower-concat": "^0.6.0",
     "grunt-cli": "~0.1.6",
+    "grunt-contrib-concat": "^0.5.1",
     "grunt-contrib-copy": "^0.8.2",
+    "grunt-contrib-cssmin": "^0.14.0",
     "grunt-contrib-uglify": "^0.10.0",
     "grunt-maven": "^1.2.0",
     "grunt-regex-replace": "^0.2.6",
     "grunt-replace": "^0.11.0",
     "jshint": "^2.8.0",
     "load-grunt-tasks": "^3.3.0"
+  },
+  "dependencies": {
+    "babel-core": "^6.0.14"
   }
 }

@@ -3,8 +3,8 @@
 <head>
     <title>soundboard</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel='stylesheet' href='css/bootstrap.min.readable.css'>
-    <link rel='stylesheet' href='css/soundboard.css'>
+    <link rel="stylesheet" href="css/bootstrap.min.readable.css">
+    <link rel="stylesheet" href="css/soundboard.css">
 </head>
 <body>
 <nav class="navbar navbar-inverse navbar-fixed-top">
@@ -34,14 +34,16 @@
     </div>
 </div><!-- /.container -->
 
-<script src="webjars/reconnecting-websocket/1.0.0/reconnecting-websocket.js"></script>
-<script src="webjars/jquery/2.1.4/jquery.min.js"></script>
-<script src="webjars/cryptojs/3.1.2/components/core-min.js"></script>
-<script src="webjars/cryptojs/3.1.2/components/md5-min.js"></script>
-<script src="webjars/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 <script src="webjars/babel/5.8.29-1/browser.min.js"></script>
-<script src="webjars/react/0.14.0/react-with-addons.min.js"></script>
-<script src="webjars/react/0.14.0/react-dom.min.js"></script>
+<!-- concat -->
+<script src="node_modules/babel-core/browser.min.js"></script>
+<script src="bower_components/reconnectingWebsocket/reconnecting-websocket.min.js"></script>
+<script src="bower_components/jquery/dist/jquery.min.js"></script>
+<script src="bower_components/blueimp-md5/js/md5.min.js"></script>
+<script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="bower_components/react/react-with-addons.min.js"></script>
+<script src="bower_components/react/react-dom.min.js"></script>
+<!-- /concat -->
 <script type="text/babel" src="js/soundboard.js"></script>
 </body>
 </html>

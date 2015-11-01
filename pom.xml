@@ -60,7 +60,7 @@
                 <artifactId>maven-war-plugin</artifactId>
                 <version>2.4</version>
                 <configuration>
-                    <warSourceExcludes>js/*.js,index.jsp</warSourceExcludes>
+                    <warSourceExcludes>js/*.js,index.jsp,css/*.css,bower_components/,node_modules/</warSourceExcludes>
                 </configuration>
             </plugin>
             <plugin>
