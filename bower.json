@@ -1,0 +1,28 @@
+{
+  "name": "soundboard",
+  "description": "a soundboard",
+  "main": "src/main/webapp/index.jsp",
+  "authors": [
+    "vileda <vileda@vileda.cc>"
+  ],
+  "license": "WTFPL",
+  "homepage": "https://github.com/vileda/soundboard",
+  "moduleType": [
+    "amd",
+    "es6"
+  ],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.1.4",
+    "reconnectingWebsocket": "~1.0.0",
+    "bootstrap": "~3.3.5",
+    "react": "~0.14.1",
+    "blueimp-md5": "~1.1.1"
+  }
+}
