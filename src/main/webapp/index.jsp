@@ -36,7 +36,7 @@
 </div><!-- /.container -->
 
 <!-- concat -->
-<script src="node_modules/babel-core/browser.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
 <script src="bower_components/reconnectingWebsocket/reconnecting-websocket.min.js"></script>
 <script src="bower_components/jquery/dist/jquery.min.js"></script>
 <script src="bower_components/blueimp-md5/js/md5.min.js"></script>
