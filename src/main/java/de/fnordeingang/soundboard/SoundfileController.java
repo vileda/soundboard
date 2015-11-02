@@ -1,6 +1,5 @@
 package de.fnordeingang.soundboard;
 
-import lombok.extern.java.Log;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -22,7 +21,7 @@ public class SoundfileController {
 	private List<Soundfile> flatSoundfiles = new ArrayList<>();
 
 	public List<Category> getSoundfiles() {
-		if(soundfiles.isEmpty()) {
+		if (soundfiles.isEmpty()) {
 			System.out.println("caching soundfiles");
 			String soundfileDir = getSoundfileLocation();
 			Category uncategorized = new Category("Uncategorized");
@@ -51,19 +50,17 @@ public class SoundfileController {
 
 	private void walkDirectories(File root, Category category, List<Category> soundfiles) {
 		File[] files = root.listFiles();
-		if(files != null) {
-			if(root.isDirectory()) {
+		if (files != null) {
+			if (root.isDirectory()) {
 				soundfiles.add(category);
 				makeTree(category, files, soundfiles);
-			}
-			else {
+			} else {
 				for (File leaf : files) {
-					if(leaf.isDirectory()) {
+					if (leaf.isDirectory()) {
 						Category category1 = new Category(leaf.getName());
 						soundfiles.add(category1);
 						makeTree(category1, leaf.listFiles(), soundfiles);
-					}
-					else makeSoundfile(category, leaf);
+					} else makeSoundfile(category, leaf);
 				}
 			}
 		}
@@ -71,12 +68,11 @@ public class SoundfileController {
 
 	private void makeTree(Category category, File[] files, List<Category> soundfiles) {
 		for (File leaf : files) {
-			if(leaf.isDirectory()) {
+			if (leaf.isDirectory()) {
 				Category category1 = new Category(leaf.getName());
 				soundfiles.add(category1);
 				makeTree(category1, leaf.listFiles(), soundfiles);
-			}
-			else makeSoundfile(category, leaf);
+			} else makeSoundfile(category, leaf);
 		}
 	}
 
@@ -85,12 +81,8 @@ public class SoundfileController {
 	}
 
 	public void play(String path) {
-		enqueue(path);
-	}
-
-	private void enqueue(String command) {
-		System.out.println("enqueuing" + command);
-		soundfileQueue.add(command);
+		System.out.println("enqueuing" + path);
+		soundfileQueue.add(path);
 	}
 
 	public List<SortedSoundfile> search(String term) {
@@ -124,8 +116,7 @@ public class SoundfileController {
 		}
 	}
 
-	public void killall()
-	{
+	public void killall() {
 		soundfileQueue.killall();
 	}
 
