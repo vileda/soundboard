@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 import static de.fnordeingang.soundboard.Config.getSoundfileLocation;
 
 @ApplicationScoped
-@Log
 public class SoundfileController {
 	@Inject
 	private SoundfileQueue soundfileQueue;
@@ -24,7 +23,7 @@ public class SoundfileController {
 
 	public List<Category> getSoundfiles() {
 		if(soundfiles.isEmpty()) {
-			log.info("caching soundfiles");
+			System.out.println("caching soundfiles");
 			String soundfileDir = getSoundfileLocation();
 			Category uncategorized = new Category("Uncategorized");
 			File dir = new File(soundfileDir);
@@ -90,9 +89,8 @@ public class SoundfileController {
 	}
 
 	private void enqueue(String command) {
-		ProcessBuilder p = new ProcessBuilder("/usr/bin/env", "mpv", command);
-		System.out.println("enqueuing" + StringUtils.join(p.command(), ' '));
-		soundfileQueue.add(p);
+		System.out.println("enqueuing" + StringUtils.join(command, ' '));
+		soundfileQueue.add(command);
 	}
 
 	public List<SortedSoundfile> search(String term) {

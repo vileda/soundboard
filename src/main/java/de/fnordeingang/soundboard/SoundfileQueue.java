@@ -27,12 +27,13 @@ public class SoundfileQueue
 	final BlockingQueue<Process> runningProcesses = new LinkedBlockingQueue<>();
 	private volatile boolean isPlaying = false;
 
-	public void add(ProcessBuilder item)
+	public void add(String item)
 	{
 		try {
-			processQueue.put(item);
+			ProcessBuilder mpv = new ProcessBuilder("/usr/bin/env", "mpv", item);
+			processQueue.put(mpv);
 			playQueue();
-			final String title = getTitle(item);
+			final String title = getTitle(mpv);
 			websocketSessionManager.broadcast(makeEventJSON("enqueue", title).toString());
 		} catch (InterruptedException e) {
 			e.printStackTrace();

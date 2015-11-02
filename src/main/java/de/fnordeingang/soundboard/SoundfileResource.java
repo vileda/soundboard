@@ -1,6 +1,5 @@
 package de.fnordeingang.soundboard;
 
-import javax.ejb.Asynchronous;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.*;
@@ -15,6 +14,9 @@ import java.util.List;
 public class SoundfileResource {
 	@Inject
 	SoundfileController controller;
+
+	@Inject
+	private CronJobController cronJobController;
 
 	@GET
 	public List<Category> getSoundfiles() {
@@ -40,4 +42,17 @@ public class SoundfileResource {
 		return controller.search(term);
 	}
 
+	@POST
+	@Path("/timer")
+	public Response createTimer(CreateTimerRequest request) {
+		String timerId = cronJobController.createTimer(request);
+		return Response.ok(timerId).build();
+	}
+
+	@POST
+	@Path("/timer/clear")
+	public Response clearTimer(String timerId) {
+		cronJobController.clearTimer(timerId);
+		return Response.ok().build();
+	}
 }
