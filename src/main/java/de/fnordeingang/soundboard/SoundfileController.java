@@ -89,7 +89,7 @@ public class SoundfileController {
 	}
 
 	private void enqueue(String command) {
-		System.out.println("enqueuing" + StringUtils.join(command, ' '));
+		System.out.println("enqueuing" + command);
 		soundfileQueue.add(command);
 	}
 
