@@ -22,8 +22,12 @@
         <div id="navbar" class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
                 <li class="active"><a href="#">Home</a></li>
-                <li><a href="#about">About</a></li>
+                <li></li>
                 <li class="alert-danger" id="kill-button"></li>
+                <li>
+                    <a href="#" data-toggle="collapse" data-target="#cronjob-form" aria-expanded="false">CronJob</a>
+                    <span id="cronjob-toggle"></span>
+                </li>
             </ul>
         </div><!--/.nav-collapse -->
     </div>

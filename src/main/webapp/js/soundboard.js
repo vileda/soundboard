@@ -86,6 +86,10 @@ var PlayQueue = React.createClass({
 var SoundfileOption = React.createClass({
     handleClick: function(e) {
         e.preventDefault();
+        if(this.props.handleClick) {
+            this.props.handleClick(e);
+            return;
+        }
         if(!streaming) {
             playOnServer($(e.target).data('url'));
         }
@@ -130,21 +134,13 @@ var CategorySelect = React.createClass({
     }
 });
 
-var AutoComplete = React.createClass({
-    render: function() {
-        return (
-            <p><a className="btn btn-success btn-default" onClick={this.props.handleClick} href="/" data-url={this.props.item.path}>{this.props.item.title}</a></p>
-        );
-    }
-});
-
 var AutoCompleteBox = React.createClass({
     render: function() {
         var nodes = this.props.list.map(function(item){
-            return <SoundfileOption soundfile={item} />
+            return <SoundfileOption handleClick={this.props.handleClick} soundfile={item} />
         }.bind(this));
         return (
-            <div className="autocompleteNodes well category-select hidden">
+            <div id={this.props.id} className="autocompleteNodes well category-select hidden">
                 {nodes}
             </div>
         );
@@ -167,15 +163,10 @@ var RemotePlay = React.createClass({
        );
    }
 });
+
 var SoundSearch = React.createClass({
     getInitialState: function() {
         return {autocomplete: [], call: {latest:0, term:''}};
-    },
-    handleClick: function (e) {
-        e.preventDefault();
-        playOnServer($(e.target).data('url'));
-        $("#search-input").val('').delay(200).trigger('keyup');
-        this.handleKeyUp({target: {value:''}});
     },
     makeCall: function(term, current) {
         var searchUrl = "sounds/search?q="+encodeURIComponent(term);
@@ -210,7 +201,48 @@ var SoundSearch = React.createClass({
                 <label>
                     Search: <input id="search-input" type="text" placeholder="search" onKeyUp={this.handleKeyUp} />
                 </label>
-                <AutoCompleteBox handleClick={this.handleClick} list={this.state.autocomplete} />
+                <AutoCompleteBox id={this.props.id} handleClick={this.props.handleClick} list={this.state.autocomplete} />
+            </div>
+        );
+    }
+});
+
+var CronJobForm = React.createClass({
+    handleClick: function(e) {
+        var url = $(e.target).data('url');
+        $("#search-input").val(url);
+        $('#cronjob-search-form').addClass('hidden');
+        this.setState({url: url});
+    },
+    handleSubmit: function (e) {
+        e.preventDefault();
+        $.ajax({
+            url: 'sounds/timer',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(
+                {
+                    filePath: this.state.url,
+                    day: $('#dayofweek').val(),
+                    hour: $('#hour').val(),
+                    minute: $('#minute').val(),
+                    second: $('#second').val()
+                }
+            )
+        });
+        $(e.target).find("input[type=text]").val('');
+    },
+    render: function() {
+        return (
+            <div id="cronjob-form" className="well collapse">
+                <form onSubmit={this.handleSubmit} class="form">
+                    <SoundSearch id="cronjob-search-form" handleClick={this.handleClick} />
+                    <label>Day of week: <input id="dayofweek" type="text" /></label>
+                    <label>Hour: <input id="hour" type="text" /></label>
+                    <label>Minute: <input id="minute" type="text" /></label>
+                    <label>Second: <input id="second" type="text" /></label>
+                    <button type="submit" className="btn btn-default">Create!</button>
+                </form>
             </div>
         );
     }
@@ -263,7 +295,7 @@ var CategorySelectPanel = React.createClass({
                 <div className="row">
                     <div className="col-md-3">
                         <div className="col-md-12"><StreamingToggle /></div>
-                        <div className="col-md-12"><SoundSearch /></div>
+                        <div className="col-md-12"><SoundSearch id="search-form" /></div>
                         <div className="col-md-12"><RemotePlay /></div>
                     </div>
                     <div className="col-md-9">
@@ -322,4 +354,9 @@ ReactDOM.render(
 ReactDOM.render(
     <KillButton />,
     document.getElementById('kill-button')
+);
+
+ReactDOM.render(
+    <CronJobForm />,
+    document.getElementById('cronjob-toggle')
 );

@@ -1,7 +1,5 @@
 package de.fnordeingang.soundboard;
 
-import org.jboss.logging.Logger;
-
 import javax.annotation.Resource;
 import javax.ejb.*;
 import javax.inject.Inject;
@@ -9,6 +7,7 @@ import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
@@ -22,7 +21,7 @@ public class CronJobController {
 
 	private final Map<String, Timer> timerMap = new HashMap<>();
 
-	private static Logger logger = Logger.getLogger(CronJobController.class);
+	private static Logger logger = Logger.getLogger(CronJobController.class.getName());
 
 	public String createTimer(CreateTimerRequest request) {
 		logger.info("cronjob " + request);
@@ -57,6 +56,9 @@ public class CronJobController {
 	@Timeout
 	public void cronJob(Timer timer) {
 		CreateTimerRequest timerRequest = (CreateTimerRequest) timer.getInfo();
+
+		if(isEmpty(timerRequest.getFilePath())) return;
+
 		soundfileQueue.add(timerRequest.getFilePath());
 		logger.info("cronjob " + timerRequest);
 	}
