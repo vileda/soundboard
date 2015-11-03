@@ -49,6 +49,10 @@ public class CronJobController {
 		timerMap.remove(timerId);
 	}
 
+	public Map<String, Timer> getTimers() {
+		return timerMap;
+	}
+
 	private String getCronValue(String value) {
 		return !isEmpty(value) ? value : "*";
 	}

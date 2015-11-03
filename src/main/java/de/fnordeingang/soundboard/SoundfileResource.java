@@ -1,11 +1,16 @@
 package de.fnordeingang.soundboard;
 
+import javax.ejb.Timer;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static javax.ws.rs.core.Response.Status.FORBIDDEN;
 
 @ApplicationScoped
 @Path("/")
@@ -45,8 +50,17 @@ public class SoundfileResource {
 	@POST
 	@Path("/timer")
 	public Response createTimer(CreateTimerRequest request) {
+		if(!controller.isSoundfilePresent(request.getFilePath())) {
+			return Response.status(FORBIDDEN).build();
+		}
 		String timerId = cronJobController.createTimer(request);
 		return Response.ok(timerId).build();
+	}
+
+	@GET
+	@Path("/timer")
+	public Map<String, Timer> getTimers() {
+		return cronJobController.getTimers();
 	}
 
 	@POST

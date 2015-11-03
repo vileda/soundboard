@@ -234,15 +234,18 @@ var CronJobForm = React.createClass({
     },
     render: function() {
         return (
-            <div id="cronjob-form" className="well collapse">
-                <form onSubmit={this.handleSubmit} class="form">
-                    <SoundSearch id="cronjob-search-form" handleClick={this.handleClick} />
-                    <label>Day of week: <input id="dayofweek" type="text" /></label>
-                    <label>Hour: <input id="hour" type="text" /></label>
-                    <label>Minute: <input id="minute" type="text" /></label>
-                    <label>Second: <input id="second" type="text" /></label>
-                    <button type="submit" className="btn btn-default">Create!</button>
-                </form>
+            <div id="cronjob-form" className="well collapse row">
+                <div className="col-md-2"></div>
+                <div className="col-md-10">
+                    <form onSubmit={this.handleSubmit} class="form">
+                        <SoundSearch id="cronjob-search-form" handleClick={this.handleClick} />
+                        <label>Day of week: <input id="dayofweek" type="text" /></label>
+                        <label>Hour: <input id="hour" type="text" /></label>
+                        <label>Minute: <input id="minute" type="text" /></label>
+                        <label>Second: <input id="second" type="text" /></label>
+                        <button type="submit" className="btn btn-default">Create!</button>
+                    </form>
+                </div>
             </div>
         );
     }
